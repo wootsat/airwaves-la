@@ -6,7 +6,6 @@
     <title>Airwaves LA</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    
     <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
     <style>
@@ -20,7 +19,56 @@
             overflow: hidden;
         }
 
-        /* Sidebar styling */
+        /* --- NEW: Login Overlay Styling --- */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .login-box {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-logo {
+            max-height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google { background-color: #ffffff; color: #444; }
+        .btn-apple { background-color: #000000; color: #fff; border: 1px solid #333; }
+        
+        /* --- Sidebar & Donate Button Styling --- */
         .sidebar {
             width: 250px;
             background-color: #1e1e1e;
@@ -29,38 +77,49 @@
             flex-direction: column;
         }
 
-        /* Logo container styling */
         .logo-container {
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            border-bottom: 1px solid #333;
             background-color: #151515; 
         }
 
         .app-logo {
             max-width: 100%;
-            height: auto;
             max-height: 60px; 
-            display: block;
+            margin-bottom: 15px;
         }
+
+        /* NEW: Donate Button */
+        .donate-btn {
+            background-color: #4da6ff;
+            color: #000;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            width: 80%;
+            text-align: center;
+        }
+
+        .donate-btn:hover { background-color: #3388dd; }
 
         .sidebar-header {
             padding: 15px 20px;
             font-size: 1.1rem;
             font-weight: bold;
             border-bottom: 1px solid #333;
-            text-align: left;
-            color: #888;
             text-transform: uppercase;
             letter-spacing: 1px;
+            color: #888;
         }
 
         .channel-list {
             list-style: none;
-            padding: 0;
-            margin: 0;
+            padding: 0; margin: 0;
             overflow-y: auto;
         }
 
@@ -72,11 +131,10 @@
         }
 
         .channel-item:hover, .channel-item.active {
-            background-color: #3a3a3a;
-            color: #4da6ff;
+            background-color: #3a3a3a; color: #4da6ff;
         }
 
-        /* Main player area styling */
+        /* --- Main Player Styling --- */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -86,76 +144,49 @@
             background-color: #000000;
         }
 
-        .video-wrapper {
-            width: 90%;
-            max-width: 1200px;
-            position: relative;
-        }
+        .video-wrapper { width: 90%; max-width: 1200px; position: relative; }
+        .video-container { width: 100%; aspect-ratio: 16 / 9; background-color: #111; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        video { width: 100%; height: 100%; outline: none; }
 
-        .video-container {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background-color: #111;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            outline: none;
-        }
-
-        /* Controls under the video */
         .controls-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: #1e1e1e;
-            padding: 10px 20px;
-            margin-top: 10px;
-            border-radius: 5px;
+            padding: 10px 20px; margin-top: 10px; border-radius: 5px;
         }
         
-        .now-playing {
-            font-size: 1.2rem;
-            color: #ddd;
-        }
-
-        .cast-buttons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        /* Native Google Cast Button */
-        google-cast-launcher {
-            width: 36px;
-            height: 36px;
-            cursor: pointer;
-        }
-
-        /* Custom AirPlay Button (hidden by default) */
-        #airplayBtn {
-            display: none; 
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        #airplayBtn svg {
-            width: 28px;
-            height: 28px;
-            fill: currentColor;
-        }
+        .now-playing { font-size: 1.2rem; color: #ddd; }
+        .cast-buttons { display: flex; gap: 15px; align-items: center; }
+        google-cast-launcher { width: 36px; height: 36px; cursor: pointer; }
+        
+        #airplayBtn { display: none; background: none; border: none; color: white; cursor: pointer; padding: 5px; }
+        #airplayBtn svg { width: 28px; height: 28px; fill: currentColor; }
     </style>
 </head>
 <body>
 
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-box">
+            <img src="https://placehold.co/200x60/1e1e1e/4da6ff?text=Airwaves+LA" alt="Airwaves LA Logo" class="login-logo">
+            <p>Please sign in to access live local broadcasts.</p>
+            
+            <button id="googleSignInBtn" class="auth-btn btn-google">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Sign in with Google
+            </button>
+
+            <button id="appleSignInBtn" class="auth-btn btn-apple">
+                <svg width="18" height="18" viewBox="0 0 384 512" fill="#ffffff"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                Sign in with Apple
+            </button>
+        </div>
+    </div>
+
     <div class="sidebar">
         <div class="logo-container">
-            <img src="airwaves-logo.png" alt="Airwaves LA Logo" class="app-logo">
+            <img src="https://placehold.co/200x60/151515/4da6ff?text=Airwaves+LA" alt="Airwaves LA Logo" class="app-logo">
+            <a href="#" class="donate-btn" target="_blank">Support Us</a>
         </div>
 
         <div class="sidebar-header">Live Channels</div>
@@ -176,7 +207,6 @@
                 
                 <div class="cast-buttons">
                     <google-cast-launcher></google-cast-launcher>
-                    
                     <button id="airplayBtn" title="AirPlay">
                         <svg viewBox="0 0 24 24">
                             <path d="M6 22h12l-6-6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-2H3V5h18v12h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
@@ -188,102 +218,120 @@
     </div>
 
     <script>
-        const video = document.getElementById('tvPlayer');
-        const channelItems = document.querySelectorAll('.channel-item');
-        const nowPlayingText = document.getElementById('nowPlayingText');
-        const airplayBtn = document.getElementById('airplayBtn');
-        let hls; 
-        let currentStreamUrl = '';
-        let currentChannelName = '';
+        // --- AUTHENTICATION UI LOGIC ---
+        const loginOverlay = document.getElementById('loginOverlay');
+        const googleSignInBtn = document.getElementById('googleSignInBtn');
+        const appleSignInBtn = document.getElementById('appleSignInBtn');
 
-        // --- 1. CHROMECAST SETUP ---
-        window.__onGCastApiAvailable = function(isAvailable) {
-            if (isAvailable) {
-                cast.framework.CastContext.getInstance().setOptions({
-                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-                });
+        // TEMPORARY: Dismiss the login screen to test the player UI. 
+        // We will replace this with actual Google/Firebase logic later.
+        function unlockPlayer() {
+            loginOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loginOverlay.style.display = 'none';
+                // Initialize the player only AFTER login
+                initPlayer();
+            }, 500);
+        }
 
-                cast.framework.CastContext.getInstance().addEventListener(
-                    cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
-                    function(event) {
-                        if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
-                            castCurrentStream();
+        googleSignInBtn.addEventListener('click', unlockPlayer);
+        appleSignInBtn.addEventListener('click', unlockPlayer);
+
+
+        // --- VIDEO PLAYER LOGIC ---
+        // I wrapped the player logic in a function so it doesn't start playing 
+        // videos in the background while the user is looking at the login screen.
+        function initPlayer() {
+            const video = document.getElementById('tvPlayer');
+            const channelItems = document.querySelectorAll('.channel-item');
+            const nowPlayingText = document.getElementById('nowPlayingText');
+            const airplayBtn = document.getElementById('airplayBtn');
+            let hls; 
+            let currentStreamUrl = '';
+            let currentChannelName = '';
+
+            // Chromecast Setup
+            window.__onGCastApiAvailable = function(isAvailable) {
+                if (isAvailable) {
+                    cast.framework.CastContext.getInstance().setOptions({
+                        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+                    });
+                    cast.framework.CastContext.getInstance().addEventListener(
+                        cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
+                        function(event) {
+                            if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
+                                castCurrentStream();
+                            }
                         }
-                    }
-                );
-            }
-        };
-
-        function castCurrentStream() {
-            const castSession = cast.framework.CastContext.getInstance().getCurrentSession();
-            if (castSession && currentStreamUrl) {
-                const mediaInfo = new chrome.cast.media.MediaInfo(currentStreamUrl, 'application/x-mpegurl');
-                mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
-                mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
-                mediaInfo.metadata.title = currentChannelName;
-
-                const request = new chrome.cast.media.LoadRequest(mediaInfo);
-                castSession.loadMedia(request).catch(error => console.error('Error casting:', error));
-            }
-        }
-
-        // --- 2. AIRPLAY SETUP ---
-        if (window.WebKitPlaybackTargetAvailabilityEvent) {
-            video.addEventListener('webkitplaybacktargetavailabilitychanged', function(event) {
-                if (event.availability === 'available') {
-                    airplayBtn.style.display = 'block';
+                    );
                 }
-            });
+            };
 
-            airplayBtn.addEventListener('click', function() {
-                video.webkitShowPlaybackTargetPicker();
-            });
-        }
-
-        // --- 3. VIDEO PLAYBACK LOGIC ---
-        function playStream(url, channelName) {
-            currentStreamUrl = url;
-            currentChannelName = channelName;
-            nowPlayingText.textContent = "Watching: " + channelName;
-
-            const castSession = cast?.framework?.CastContext?.getInstance()?.getCurrentSession();
-            if (castSession) {
-                castCurrentStream();
-                video.pause(); 
-                return; 
+            function castCurrentStream() {
+                const castSession = cast.framework.CastContext.getInstance().getCurrentSession();
+                if (castSession && currentStreamUrl) {
+                    const mediaInfo = new chrome.cast.media.MediaInfo(currentStreamUrl, 'application/x-mpegurl');
+                    mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
+                    mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
+                    mediaInfo.metadata.title = currentChannelName;
+                    const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                    castSession.loadMedia(request).catch(error => console.error('Error casting:', error));
+                }
             }
 
-            if (Hls.isSupported()) {
-                if (hls) hls.destroy(); 
-                hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log("Autoplay prevented by browser", e));
+            // AirPlay Setup
+            if (window.WebKitPlaybackTargetAvailabilityEvent) {
+                video.addEventListener('webkitplaybacktargetavailabilitychanged', function(event) {
+                    if (event.availability === 'available') airplayBtn.style.display = 'block';
                 });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.log("Autoplay prevented by browser", e));
+                airplayBtn.addEventListener('click', function() {
+                    video.webkitShowPlaybackTargetPicker();
                 });
-            } else {
-                nowPlayingText.textContent = "Your browser does not support HLS video.";
             }
-        }
 
-        // --- 4. UI INTERACTION ---
-        channelItems.forEach(item => {
-            item.addEventListener('click', function() {
-                channelItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                playStream(this.getAttribute('data-url'), this.textContent);
+            // Video Playback
+            function playStream(url, channelName) {
+                currentStreamUrl = url;
+                currentChannelName = channelName;
+                nowPlayingText.textContent = "Watching: " + channelName;
+
+                const castSession = cast?.framework?.CastContext?.getInstance()?.getCurrentSession();
+                if (castSession) {
+                    castCurrentStream();
+                    video.pause(); 
+                    return; 
+                }
+
+                if (Hls.isSupported()) {
+                    if (hls) hls.destroy(); 
+                    hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                        video.play().catch(e => console.log("Autoplay prevented", e));
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                    video.addEventListener('loadedmetadata', function() {
+                        video.play().catch(e => console.log("Autoplay prevented", e));
+                    });
+                }
+            }
+
+            // UI Interaction
+            channelItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    channelItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    playStream(this.getAttribute('data-url'), this.textContent);
+                });
             });
-        });
 
-        // Autoplay first channel on load
-        if (channelItems.length > 0) {
-            playStream(channelItems[0].getAttribute('data-url'), channelItems[0].textContent);
+            // Autoplay first channel on load
+            if (channelItems.length > 0) {
+                playStream(channelItems[0].getAttribute('data-url'), channelItems[0].textContent);
+            }
         }
     </script>
 </body>
