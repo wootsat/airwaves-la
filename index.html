@@ -273,12 +273,31 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Import Firebase libraries directly from Google's CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const firebaseConfig = {
+        apiKey: "AIzaSyB2pNxM0CJmLO0lZbTJqsXptciUE0uybh8",
+        authDomain: "airwaves-la.firebaseapp.com",
+        projectId: "airwaves-la",
+        storageBucket: "airwaves-la.firebasestorage.app",
+        messagingSenderId: "644076426174",
+        appId: "1:644076426174:web:30b69814eb6062739b1fef"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
         // --- AUTHENTICATION UI LOGIC ---
         const loginOverlay = document.getElementById('loginOverlay');
         const googleSignInBtn = document.getElementById('googleSignInBtn');
         const appleSignInBtn = document.getElementById('appleSignInBtn');
 
+        // Function to smoothly hide the login screen and start the video
         function unlockPlayer() {
             initPlayer();
             loginOverlay.style.opacity = '0';
@@ -287,8 +306,31 @@
             }, 700); 
         }
 
-        googleSignInBtn.addEventListener('click', unlockPlayer);
+        // Check if the user is already logged in from a previous visit
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is already signed in! Bypass the login screen automatically.
+                console.log("Welcome back:", user.displayName);
+                unlockPlayer();
+            }
+        });
+
+        // Trigger Google Login when button is clicked
+        googleSignInBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // Login successful! 
+                    console.log("Successfully logged in as:", result.user.displayName);
+                    unlockPlayer();
+                }).catch((error) => {
+                    console.error("Login failed:", error.message);
+                    alert("Sign in failed. Please try again.");
+                });
+        });
+
+        // Leave Apple as a dummy bypass for now until you get an Apple Dev Account
         appleSignInBtn.addEventListener('click', unlockPlayer);
+
 
         // --- GLOBAL SETUP (Required for Chromecast) ---
         let currentStreamUrl = '';
@@ -331,7 +373,6 @@
             const airplayBtn = document.getElementById('airplayBtn');
             let hls; 
 
-            // AirPlay Setup
             if (window.WebKitPlaybackTargetAvailabilityEvent) {
                 video.addEventListener('webkitplaybacktargetavailabilitychanged', function(event) {
                     if (event.availability === 'available') airplayBtn.style.display = 'block';
@@ -341,7 +382,6 @@
                 });
             }
 
-            // Video Playback
             function playStream(url, channelName) {
                 currentStreamUrl = url;
                 currentChannelName = channelName;
@@ -373,7 +413,6 @@
                 }
             }
 
-            // UI Interaction for Sidebar Channels
             channelItems.forEach(item => {
                 item.addEventListener('click', function() {
                     channelItems.forEach(i => i.classList.remove('active'));
@@ -382,7 +421,6 @@
                 });
             });
 
-            // Autoplay first channel on load
             if (channelItems.length > 0) {
                 playStream(channelItems[0].getAttribute('data-url'), channelItems[0].textContent);
             }
