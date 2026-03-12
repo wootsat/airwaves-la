@@ -12,14 +12,14 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #050505; /* Deeper black for main background */
+            background-color: #050505; 
             color: #ffffff;
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* --- NEW: Full-Screen Splash Page Styling --- */
+        /* --- Full-Screen Splash Page Styling --- */
         .login-overlay {
             position: fixed;
             top: 0;
@@ -32,46 +32,30 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.7s ease, visibility 0.7s;
-            
-            /* --- INSTRUCTIONS: To add a background image --- */
-            /* 1. Uncomment the lines below (remove the /* and *\/) */
-            /* 2. Replace 'your-la-skyline.jpg' with your actual image path */
-            /* 3. Ensure the image is uploaded to your GitHub repository */
-            
-            /*
-            background-image: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.9) 100%), url('your-la-skyline.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            */
-
-            /* Default cinematic gradient for now */
             background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
         .login-content {
             text-align: center;
-            max-width: 600px; /* Wider for splash effect */
+            max-width: 600px; 
             width: 90%;
             padding: 40px;
-            /* Clever effect: blurs the background image behind the content for readability */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 16px;
-            background-color: rgba(255, 255, 255, 0.03); /* Extremely subtle white tint */
-            border: 1px solid rgba(255, 255, 255, 0.08); /* Subtle glass-like border */
+            background-color: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
         }
 
         .login-logo {
-            max-height: 140px; /* Make the logo truly prominent */
+            max-height: 140px; 
             margin-bottom: 30px;
             width: auto;
-            /* Optional: subtle glow on the logo for a premium effect */
             filter: drop-shadow(0 0 15px rgba(77, 166, 255, 0.3));
         }
 
         .login-title {
-            font-size: 2.5rem; /* Large, bold title */
+            font-size: 2.5rem; 
             margin: 0 0 20px 0;
             font-weight: 700;
             color: #ffffff;
@@ -79,21 +63,21 @@
         }
 
         .login-summary {
-            font-size: 1.2rem; /* Clear, readable summary */
+            font-size: 1.2rem; 
             line-height: 1.6;
             color: #dddddd;
             margin-bottom: 45px;
-            font-weight: 300; /* Lighter weight for modern feel */
+            font-weight: 300; 
         }
 
         .auth-buttons-container {
-            max-width: 350px; /* Keep buttons contained and neat */
+            max-width: 350px; 
             margin: 0 auto;
         }
 
         .auth-btn {
             width: 100%;
-            padding: 16px; /* Premium tall buttons */
+            padding: 16px; 
             margin-top: 15px;
             border: none;
             border-radius: 8px;
@@ -108,12 +92,12 @@
         }
 
         .auth-btn:hover {
-            transform: translateY(-2px); /* Subtle float on hover */
+            transform: translateY(-2px); 
             filter: brightness(1.1);
         }
 
         .auth-btn:active {
-            transform: translateY(1px); /* Pressed effect */
+            transform: translateY(1px); 
         }
 
         .btn-google { background-color: #ffffff; color: #1a1a1a; }
@@ -122,8 +106,8 @@
         /* --- Sidebar & Donate Button Styling --- */
         .sidebar {
             width: 250px;
-            background-color: #0a0a0a; /* Match deeper main background */
-            border-right: 1px solid #222; /* Darker border */
+            background-color: #0a0a0a; 
+            border-right: 1px solid #222; 
             display: flex;
             flex-direction: column;
         }
@@ -133,7 +117,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #000000; /* Pitch black for logo section */
+            background-color: #000000; 
             border-bottom: 1px solid #222;
         }
 
@@ -147,7 +131,7 @@
             background-color: #4da6ff;
             color: #000000;
             text-decoration: none;
-            padding: 10px 20px; /* Premium padding */
+            padding: 10px 20px; 
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 700;
@@ -159,13 +143,13 @@
         .donate-btn:hover { background-color: #3388dd; }
 
         .sidebar-header {
-            padding: 18px 20px; /* Slightly taller headers */
-            font-size: 0.95rem; /* Refined size */
+            padding: 18px 20px; 
+            font-size: 0.95rem; 
             font-weight: 700;
             border-bottom: 1px solid #222;
             text-transform: uppercase;
-            letter-spacing: 2px; /* Increased letter spacing */
-            color: #666; /* Muted color for headers */
+            letter-spacing: 2px; 
+            color: #666; 
         }
 
         .channel-list {
@@ -175,24 +159,24 @@
         }
 
         .channel-item {
-            padding: 18px 20px; /* Modern spacing */
+            padding: 18px 20px; 
             cursor: pointer;
-            border-bottom: 1px solid #1a1a1a; /* Subtle border */
+            border-bottom: 1px solid #1a1a1a; 
             transition: all 0.2s ease;
             font-size: 1rem;
             color: #aaaaaa;
         }
 
         .channel-item:hover {
-            background-color: rgba(77, 166, 255, 0.05); /* Very subtle brand color tint */
+            background-color: rgba(77, 166, 255, 0.05); 
             color: #ffffff;
         }
 
         .channel-item.active {
-            background-color: rgba(77, 166, 255, 0.1); /* Brand color tint for active */
+            background-color: rgba(77, 166, 255, 0.1); 
             color: #4da6ff;
-            border-left: 3px solid #4da6ff; /* Brand line on active channel */
-            padding-left: 17px; /* Offset for border-left */
+            border-left: 3px solid #4da6ff; 
+            padding-left: 17px; 
             font-weight: 600;
         }
 
@@ -214,9 +198,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #0a0a0a; /* Darker control bar */
-            padding: 12px 25px; /* Modern padding */
-            margin-top: 15px; /* Increased margin */
+            background-color: #0a0a0a; 
+            padding: 12px 25px; 
+            margin-top: 15px; 
             border-radius: 8px;
             border: 1px solid #222;
         }
@@ -234,7 +218,7 @@
 
     <div id="loginOverlay" class="login-overlay">
         <div class="login-content">
-            <img src="https://placehold.co/500x150/000000/4da6ff?text=Airwaves+LA" alt="Airwaves LA Logo" class="login-logo">
+            <img src="airwaves-logo.png" alt="Airwaves LA Logo" class="login-logo">
             
             <h1 class="login-title">Your Local TV, Anywhere.</h1>
             <p class="login-summary">
@@ -257,7 +241,7 @@
 
     <div class="sidebar">
         <div class="logo-container">
-            <img src="https://placehold.co/200x60/000000/4da6ff?text=Airwaves+LA" alt="Airwaves LA Logo" class="app-logo">
+            <img src="airwaves-logo.png" alt="Airwaves LA Logo" class="app-logo">
             <a href="#" class="donate-btn" target="_blank">Support Us</a>
         </div>
 
@@ -296,14 +280,11 @@
         const appleSignInBtn = document.getElementById('appleSignInBtn');
 
         function unlockPlayer() {
-            // Initialize the player immediately on click to satisfy strict autoplay rules
             initPlayer();
-            
-            // Handle the visual fade-out of the login screen independently
             loginOverlay.style.opacity = '0';
             setTimeout(() => {
                 loginOverlay.style.display = 'none';
-            }, 700); /* Slightly longer transition for splash fade */
+            }, 700); 
         }
 
         googleSignInBtn.addEventListener('click', unlockPlayer);
@@ -331,7 +312,6 @@
         };
 
         function castCurrentStream() {
-            // Added window.cast check to prevent crashes if Firefox blocks the script
             const castSession = window.cast?.framework?.CastContext?.getInstance()?.getCurrentSession();
             if (castSession && currentStreamUrl) {
                 const mediaInfo = new chrome.cast.media.MediaInfo(currentStreamUrl, 'application/x-mpegurl');
@@ -367,7 +347,6 @@
                 currentChannelName = channelName;
                 nowPlayingText.textContent = "Watching: " + channelName;
 
-                // CRITICAL FIX: Added window.cast to safely check if the Google script was blocked
                 const castSession = window.cast?.framework?.CastContext?.getInstance()?.getCurrentSession();
                 if (castSession) {
                     castCurrentStream();
