@@ -19,7 +19,7 @@
             overflow: hidden;
         }
 
-        /* --- NEW: Login Overlay Styling --- */
+        /* --- Login Overlay Styling --- */
         .login-overlay {
             position: fixed;
             top: 0;
@@ -91,7 +91,6 @@
             margin-bottom: 15px;
         }
 
-        /* NEW: Donate Button */
         .donate-btn {
             background-color: #4da6ff;
             color: #000;
@@ -223,62 +222,61 @@
         const googleSignInBtn = document.getElementById('googleSignInBtn');
         const appleSignInBtn = document.getElementById('appleSignInBtn');
 
-        // TEMPORARY: Dismiss the login screen to test the player UI. 
-        // We will replace this with actual Google/Firebase logic later.
         function unlockPlayer() {
+            // Initialize the player immediately on click to satisfy strict autoplay rules
+            initPlayer();
+            
+            // Handle the visual fade-out of the login screen independently
             loginOverlay.style.opacity = '0';
             setTimeout(() => {
                 loginOverlay.style.display = 'none';
-                // Initialize the player only AFTER login
-                initPlayer();
             }, 500);
         }
 
         googleSignInBtn.addEventListener('click', unlockPlayer);
         appleSignInBtn.addEventListener('click', unlockPlayer);
 
+        // --- GLOBAL SETUP (Required for Chromecast) ---
+        let currentStreamUrl = '';
+        let currentChannelName = '';
+        
+        // This MUST be outside initPlayer() so Google's script finds it immediately on page load
+        window.__onGCastApiAvailable = function(isAvailable) {
+            if (isAvailable) {
+                cast.framework.CastContext.getInstance().setOptions({
+                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+                });
+                cast.framework.CastContext.getInstance().addEventListener(
+                    cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
+                    function(event) {
+                        if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
+                            castCurrentStream();
+                        }
+                    }
+                );
+            }
+        };
+
+        function castCurrentStream() {
+            const castSession = cast.framework.CastContext.getInstance().getCurrentSession();
+            if (castSession && currentStreamUrl) {
+                const mediaInfo = new chrome.cast.media.MediaInfo(currentStreamUrl, 'application/x-mpegurl');
+                mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
+                mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
+                mediaInfo.metadata.title = currentChannelName;
+                const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                castSession.loadMedia(request).catch(error => console.error('Error casting:', error));
+            }
+        }
 
         // --- VIDEO PLAYER LOGIC ---
-        // I wrapped the player logic in a function so it doesn't start playing 
-        // videos in the background while the user is looking at the login screen.
         function initPlayer() {
             const video = document.getElementById('tvPlayer');
             const channelItems = document.querySelectorAll('.channel-item');
             const nowPlayingText = document.getElementById('nowPlayingText');
             const airplayBtn = document.getElementById('airplayBtn');
             let hls; 
-            let currentStreamUrl = '';
-            let currentChannelName = '';
-
-            // Chromecast Setup
-            window.__onGCastApiAvailable = function(isAvailable) {
-                if (isAvailable) {
-                    cast.framework.CastContext.getInstance().setOptions({
-                        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-                        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-                    });
-                    cast.framework.CastContext.getInstance().addEventListener(
-                        cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
-                        function(event) {
-                            if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
-                                castCurrentStream();
-                            }
-                        }
-                    );
-                }
-            };
-
-            function castCurrentStream() {
-                const castSession = cast.framework.CastContext.getInstance().getCurrentSession();
-                if (castSession && currentStreamUrl) {
-                    const mediaInfo = new chrome.cast.media.MediaInfo(currentStreamUrl, 'application/x-mpegurl');
-                    mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
-                    mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
-                    mediaInfo.metadata.title = currentChannelName;
-                    const request = new chrome.cast.media.LoadRequest(mediaInfo);
-                    castSession.loadMedia(request).catch(error => console.error('Error casting:', error));
-                }
-            }
 
             // AirPlay Setup
             if (window.WebKitPlaybackTargetAvailabilityEvent) {
@@ -309,7 +307,11 @@
                     hls.loadSource(url);
                     hls.attachMedia(video);
                     hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        video.play().catch(e => console.log("Autoplay prevented", e));
+                        // Play immediately when ready
+                        video.play().catch(e => {
+                            console.log("Autoplay prevented", e);
+                            video.controls = true; 
+                        });
                     });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = url;
@@ -319,7 +321,7 @@
                 }
             }
 
-            // UI Interaction
+            // UI Interaction for Sidebar Channels
             channelItems.forEach(item => {
                 item.addEventListener('click', function() {
                     channelItems.forEach(i => i.classList.remove('active'));
