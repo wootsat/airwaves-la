@@ -19,8 +19,8 @@
             overflow: hidden;
         }
 
-        /* --- Full-Screen Splash Page Styling --- */
-        .login-overlay {
+        /* --- Full-Screen Overlay Styling (Used for Login & Donation) --- */
+        .overlay-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -35,7 +35,7 @@
             background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
-        .login-content {
+        .overlay-content {
             text-align: center;
             max-width: 600px; 
             width: 90%;
@@ -47,14 +47,14 @@
             border: 1px solid rgba(255, 255, 255, 0.08); 
         }
 
-        .login-logo {
+        .overlay-logo {
             max-height: 140px; 
             margin-bottom: 30px;
             width: auto;
             filter: drop-shadow(0 0 15px rgba(77, 166, 255, 0.3));
         }
 
-        .login-title {
+        .overlay-title {
             font-size: 2.5rem; 
             margin: 0 0 20px 0;
             font-weight: 700;
@@ -62,7 +62,7 @@
             letter-spacing: -1px;
         }
 
-        .login-summary {
+        .overlay-summary {
             font-size: 1.2rem; 
             line-height: 1.6;
             color: #dddddd;
@@ -70,12 +70,15 @@
             font-weight: 300; 
         }
 
-        .auth-buttons-container {
+        .buttons-container {
             max-width: 350px; 
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .auth-btn {
+        .main-btn {
             width: 100%;
             padding: 16px; 
             margin-top: 15px;
@@ -89,21 +92,39 @@
             justify-content: center;
             gap: 12px;
             transition: all 0.2s ease;
+            text-decoration: none;
+            box-sizing: border-box;
         }
 
-        .auth-btn:hover {
+        .main-btn:hover {
             transform: translateY(-2px); 
             filter: brightness(1.1);
         }
 
-        .auth-btn:active {
+        .main-btn:active {
             transform: translateY(1px); 
         }
 
         .btn-google { background-color: #ffffff; color: #1a1a1a; }
         .btn-apple { background-color: #000000; color: #ffffff; border: 1px solid #444; }
         
-        /* --- Sidebar & Donate Button Styling --- */
+        /* The Donate Button gets a primary brand color */
+        .btn-donate { background-color: #4da6ff; color: #000000; }
+        
+        /* The Skip Button gets a subtle, secondary style */
+        .btn-skip { 
+            background: transparent; 
+            color: #888888; 
+            border: none; 
+            font-size: 0.95rem; 
+            margin-top: 25px; 
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .btn-skip:hover { color: #ffffff; }
+
+        
+        /* --- Sidebar & Main Content Styling --- */
         .sidebar {
             width: 250px;
             background-color: #0a0a0a; 
@@ -127,7 +148,7 @@
             margin-bottom: 15px;
         }
 
-        .donate-btn {
+        .sidebar-donate-btn {
             background-color: #4da6ff;
             color: #000000;
             text-decoration: none;
@@ -140,7 +161,7 @@
             text-align: center;
         }
 
-        .donate-btn:hover { background-color: #3388dd; }
+        .sidebar-donate-btn:hover { background-color: #3388dd; }
 
         .sidebar-header {
             padding: 18px 20px; 
@@ -180,7 +201,6 @@
             font-weight: 600;
         }
 
-        /* --- Main Player Styling --- */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -216,22 +236,22 @@
 </head>
 <body>
 
-    <div id="loginOverlay" class="login-overlay">
-        <div class="login-content">
-            <img src="airwaves-logo.png" alt="Airwaves LA Logo" class="login-logo">
+    <div id="loginOverlay" class="overlay-screen">
+        <div class="overlay-content">
+            <img src="airwaves-logo.png" alt="Airwaves LA Logo" class="overlay-logo">
             
-            <h1 class="login-title">Your Local TV, Anywhere.</h1>
-            <p class="login-summary">
-                Airwaves LA captures free, over-the-air television broadcasts in the Los Angeles area and streams them directly to your browser. No antennas, no cable boxes—just live local news, sports, and entertainment. Sign in securely to start watching.
+            <h1 class="overlay-title">Your Local TV, Anywhere.</h1>
+            <p class="overlay-summary">
+                Airwaves LA captures free, over-the-air television broadcasts in the Los Angeles area and streams them directly to your browser. Sign in securely to start watching.
             </p>
             
-            <div class="auth-buttons-container">
-                <button id="googleSignInBtn" class="auth-btn btn-google">
+            <div class="buttons-container">
+                <button id="googleSignInBtn" class="main-btn btn-google">
                     <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                     Sign in with Google
                 </button>
 
-                <button id="appleSignInBtn" class="auth-btn btn-apple">
+                <button id="appleSignInBtn" class="main-btn btn-apple">
                     <svg width="22" height="22" viewBox="0 0 384 512" fill="#ffffff"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
                     Sign in with Apple
                 </button>
@@ -239,10 +259,27 @@
         </div>
     </div>
 
+    <div id="donationOverlay" class="overlay-screen" style="display: none; opacity: 0;">
+        <div class="overlay-content">
+            <img src="airwaves-logo.png" alt="Airwaves LA Logo" class="overlay-logo">
+            
+            <h1 class="overlay-title">Keep Local TV Free.</h1>
+            <p class="overlay-summary">
+                Airwaves LA is powered by the community. Set up a recurring monthly donation to help us cover our heavy video server costs and keep the broadcast running for everyone.
+            </p>
+            
+            <div class="buttons-container">
+                <a href="#" class="main-btn btn-donate" id="donateNowBtn" target="_blank">Support Airwaves LA</a>
+                
+                <button id="skipDonationBtn" class="btn-skip">Skip for now</button>
+            </div>
+        </div>
+    </div>
+
     <div class="sidebar">
         <div class="logo-container">
             <img src="airwaves-logo.png" alt="Airwaves LA Logo" class="app-logo">
-            <a href="#" class="donate-btn" target="_blank">Support Us</a>
+            <a href="#" class="sidebar-donate-btn" target="_blank">Support Us</a>
         </div>
 
         <div class="sidebar-header">Live Channels</div>
@@ -274,62 +311,85 @@
     </div>
 
     <script type="module">
-        // Import Firebase libraries directly from Google's CDN
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
+        // ==========================================
+        // FIREBASE CONFIG OBJECT
+        // ==========================================
         const firebaseConfig = {
-        apiKey: "AIzaSyB2pNxM0CJmLO0lZbTJqsXptciUE0uybh8",
-        authDomain: "airwaves-la.firebaseapp.com",
-        projectId: "airwaves-la",
-        storageBucket: "airwaves-la.firebasestorage.app",
-        messagingSenderId: "644076426174",
-        appId: "1:644076426174:web:30b69814eb6062739b1fef"
+            apiKey: "AIzaSyB2pNxM0CJmLO0lZbTJqsXptciUE0uybh8",
+            authDomain: "airwaves-la.firebaseapp.com",
+            projectId: "airwaves-la",
+            storageBucket: "airwaves-la.firebasestorage.app",
+            messagingSenderId: "644076426174",
+            appId: "1:644076426174:web:30b69814eb6062739b1fef"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // --- AUTHENTICATION UI LOGIC ---
+        // --- AUTH & DONATION UI FLOW ---
         const loginOverlay = document.getElementById('loginOverlay');
+        const donationOverlay = document.getElementById('donationOverlay');
+        
         const googleSignInBtn = document.getElementById('googleSignInBtn');
         const appleSignInBtn = document.getElementById('appleSignInBtn');
+        const skipDonationBtn = document.getElementById('skipDonationBtn');
+        const donateNowBtn = document.getElementById('donateNowBtn');
 
-        // Function to smoothly hide the login screen and start the video
-        function unlockPlayer() {
-            initPlayer();
+        // Step 1: Hide Login, Show Donation Screen
+        function showDonationScreen() {
             loginOverlay.style.opacity = '0';
+            
+            // Wait for fade out, then swap displays
             setTimeout(() => {
                 loginOverlay.style.display = 'none';
+                donationOverlay.style.display = 'flex';
+                
+                // Slight delay to allow display:flex to register before fading in
+                setTimeout(() => {
+                    donationOverlay.style.opacity = '1';
+                }, 50);
+            }, 700);
+        }
+
+        // Step 2: Hide Donation Screen, Unlock Player
+        function unlockPlayer() {
+            initPlayer();
+            donationOverlay.style.opacity = '0';
+            setTimeout(() => {
+                donationOverlay.style.display = 'none';
             }, 700); 
         }
 
-        // Check if the user is already logged in from a previous visit
+        // Auth Listeners
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is already signed in! Bypass the login screen automatically.
-                console.log("Welcome back:", user.displayName);
-                unlockPlayer();
+                // If they are already logged in, show the donation screen
+                showDonationScreen();
             }
         });
 
-        // Trigger Google Login when button is clicked
         googleSignInBtn.addEventListener('click', () => {
             signInWithPopup(auth, provider)
                 .then((result) => {
-                    // Login successful! 
-                    console.log("Successfully logged in as:", result.user.displayName);
-                    unlockPlayer();
+                    showDonationScreen();
                 }).catch((error) => {
                     console.error("Login failed:", error.message);
                     alert("Sign in failed. Please try again.");
                 });
         });
 
-        // Leave Apple as a dummy bypass for now until you get an Apple Dev Account
-        appleSignInBtn.addEventListener('click', unlockPlayer);
+        // Dummy Apple login trigger
+        appleSignInBtn.addEventListener('click', showDonationScreen);
+
+        // Donation Screen Button Listeners
+        skipDonationBtn.addEventListener('click', unlockPlayer);
+        
+        // When they click donate, it opens in a new tab, but we still want to unlock the player behind it
+        donateNowBtn.addEventListener('click', unlockPlayer);
 
 
         // --- GLOBAL SETUP (Required for Chromecast) ---
