@@ -240,7 +240,6 @@
         let currentStreamUrl = '';
         let currentChannelName = '';
         
-        // This MUST be outside initPlayer() so Google's script finds it immediately on page load
         window.__onGCastApiAvailable = function(isAvailable) {
             if (isAvailable) {
                 cast.framework.CastContext.getInstance().setOptions({
@@ -259,7 +258,8 @@
         };
 
         function castCurrentStream() {
-            const castSession = cast.framework.CastContext.getInstance().getCurrentSession();
+            // Added window.cast check to prevent crashes if Firefox blocks the script
+            const castSession = window.cast?.framework?.CastContext?.getInstance()?.getCurrentSession();
             if (castSession && currentStreamUrl) {
                 const mediaInfo = new chrome.cast.media.MediaInfo(currentStreamUrl, 'application/x-mpegurl');
                 mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
@@ -294,7 +294,8 @@
                 currentChannelName = channelName;
                 nowPlayingText.textContent = "Watching: " + channelName;
 
-                const castSession = cast?.framework?.CastContext?.getInstance()?.getCurrentSession();
+                // CRITICAL FIX: Added window.cast to safely check if the Google script was blocked
+                const castSession = window.cast?.framework?.CastContext?.getInstance()?.getCurrentSession();
                 if (castSession) {
                     castCurrentStream();
                     video.pause(); 
@@ -307,7 +308,6 @@
                     hls.loadSource(url);
                     hls.attachMedia(video);
                     hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        // Play immediately when ready
                         video.play().catch(e => {
                             console.log("Autoplay prevented", e);
                             video.controls = true; 
